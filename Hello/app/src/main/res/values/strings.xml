@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">ChoiceMate</string>
+    <string name="button_text">SUBMIT</string>
+    <string name="text_view">Enter Your Name:</string>
+    <string name="edit_text">Your Name</string>
+    <string name="description">Panda</string>
+    <string name="optionC11">Subscribe NewsPaper</string>
+    <string name="textR1">Which is Your Favourite Color</string>
+    <string name="optionR11">Black</string>
+    <string name="optionR21">Blue</string>
+    <string name="optionR31">Red</string>
+    <string name="switchButton">I Accept My Choice</string>
+    <string name="text_size">Text Size</string>
+    <string name="seektext">Text Size :</string>
+    <string name="Progress">Completed % :</string>
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+    <string name="SpinnerText">Gender :</string>
+
+</resources>
