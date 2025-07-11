@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Indicator</string>
+    <string name="left">←</string>
+    <string name="right">→</string>
+    <string name="LEFT">LEFT</string>
+    <string name="RIGHT">RIGHT</string>
+</resources>
