@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.AutoVaultt" parent="android:Theme.Material.Light.DarkActionBar" />
+</resources>
