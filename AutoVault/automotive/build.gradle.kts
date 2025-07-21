@@ -1,10 +1,8 @@
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") // ✅ Required for Kotlin 2.0 + Compose
-    id("com.google.gms.google-services")      // ✅ Firebase plugin
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -24,7 +22,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13" // ✅ Compatible with Kotlin 2.0
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
 
     compileOptions {
@@ -52,26 +50,25 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
 
-    // Compose
+    // Jetpack Compose
     implementation("androidx.compose.ui:ui:1.6.7")
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
-    implementation(libs.androidx.navigation.compose.jvmstubs)
+    implementation("androidx.navigation:navigation-compose:2.7.7") // ✅ FIXED
+
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
+
+    // Firebase BOM (✅ Required fix)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
     // Location Services
     implementation("com.google.android.gms:play-services-location:21.1.0")
 
-    // Firebase Firestore (you can add auth/storage/messaging as needed)
-    implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+    // Jetpack WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
-    // Firestore
-    implementation ("com.google.firebase:firebase-firestore-ktx:24.10.3")
-
-    // Location Services
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
-
-    // Firebase BOM (optional but useful for versioning)
-    implementation ("com.google.firebase:firebase-bom:32.7.3")
+    // AndroidX Security (Encrypted file store)
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 }
