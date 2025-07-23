@@ -1,32 +1,6 @@
 package com.example.autovault.ui
 
-//import androidx.compose.material3.Text
-//import androidx.compose.runtime.Composable
-//
-//class DigitalDocsScreen {
-//    @Composable
-//    fun DigitalDocsScreen() {
-//        Text("Digital Docs Screen ")
-//    }
-//}
-//import androidx.compose.foundation.layout.*
-//import androidx.compose.material3.*
-//import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.unit.dp
-//
-//@Composable
-//fun DigitalDocsScreen() {
-//    Column(Modifier.padding(16.dp)) {
-//        Text("Upload or View Car Documents")
-//        Button(onClick = {/* open file picker */ }) {
-//            Text("Upload RC")
-//        }
-//        Button(onClick = {/* view stored file */ }) {
-//            Text("View Insurance")
-//        }
-//    }
-//}
+
 
 
 import android.content.Context
