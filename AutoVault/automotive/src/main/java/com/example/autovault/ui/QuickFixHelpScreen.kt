@@ -1,5 +1,6 @@
 package com.example.autovault.ui
 
+import android.car.VehiclePropertyIds
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
@@ -16,10 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.autovault.data.car_api.GetVehicleData
+import com.example.autovault.data.car_api.dto.BatteryLevel
+import com.example.autovault.data.car_api.dto.VehicleData
 
 // ✅ Composable with NavController for navigation
 @Composable
-fun QuickFixHelpScreen(navController: NavController) {
+fun QuickFixHelpScreen(navController: NavController,
+                       vehicleData: VehicleData) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -27,14 +32,34 @@ fun QuickFixHelpScreen(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(quickFixItems) { item ->
-            ExpandableQuickFixCard(item)
+
+            when(item.title){
+                "Battery Issues" -> {
+                    ExpandableQuickFixCard(item, vehicleData, "Battery Issues")
+                }
+                "Flat Tyre" ->{
+                    ExpandableQuickFixCard(item, vehicleData, "Flat Tyre")
+                }
+                "Overheating Engine" -> {
+                    ExpandableQuickFixCard(item, vehicleData, "Overheating Engine")
+                }
+                "Brake Problems" -> {
+                    ExpandableQuickFixCard(item, vehicleData, "Brake Problems")
+                }
+                "Headlight Failure" -> {
+                    ExpandableQuickFixCard(item, vehicleData, "Headlight Failure")
+                }
+
+            }
+
+
         }
     }
 }
 
 // ✅ Expandable Card
 @Composable
-fun ExpandableQuickFixCard(item: QuickFixItem) {
+fun ExpandableQuickFixCard(item: QuickFixItem, vehicleData: VehicleData, msg: String) {
     var expanded by remember { mutableStateOf(false) }
 
     Card(
@@ -59,6 +84,41 @@ fun ExpandableQuickFixCard(item: QuickFixItem) {
                     contentDescription = "Info",
                     tint = MaterialTheme.colorScheme.primary
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                when(msg){
+                    "Battery Issues" ->{
+                        Text(
+                            text = "$msg ${vehicleData.batteryLevel.value}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    "Flat Tyre" -> {
+                        Text(
+                            text = "$msg ${vehicleData.flatTyre.value}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    "Overheating Engine" -> {
+                        Text(
+                            text = "$msg ${vehicleData.overheatingEngine.value}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    "Brake Problems" -> {
+                        Text(
+                            text = "$msg ${vehicleData.brakeProblem.value}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    "Headlight Failure" -> {
+                        Text(
+                            text = "$msg ${vehicleData.headlightFailure.value}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
             }
 
             AnimatedVisibility(visible = expanded) {
@@ -150,7 +210,7 @@ val quickFixItems = listOf(
         )
     ),
     QuickFixItem(
-        "Headlight/Taillight Failure",
+        "Headlight Failure",
         listOf(
             "Check for blown fuses in fuse box",
             "Replace burnt-out bulbs",

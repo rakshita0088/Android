@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "431145820653",
+    "project_id": "utovaultt",
+    "storage_bucket": "utovaultt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431145820653:android:f88fa0c5a16186ffdd87e4",
+        "android_client_info": {
+          "package_name": "com.example.autovaultt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZUimmVWcnBAzo3m1SgyNCGTd7A1ff-1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

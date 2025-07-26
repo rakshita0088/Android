@@ -1,8 +1,8 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-
-    id ("com.google.gms.google-services")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose") // ✅ required for Kotlin 2.0
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -28,13 +28,23 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+    buildFeatures {
+        compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.13" // or latest version matching your Compose
+    }
+
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+
 }
 
 dependencies {
@@ -47,7 +57,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation ("com.google.firebase:firebase-database-ktx")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
-    dependencies {
+
         // Firebase Realtime Database
         implementation ("com.google.firebase:firebase-database-ktx")
 
@@ -58,9 +68,9 @@ dependencies {
         implementation("androidx.activity:activity-compose:1.8.0") // or newer
         implementation("androidx.compose.material3:material3:1.2.0") // if using Material3
         implementation("com.google.android.gms:play-services-location:21.0.1") // for fusedLocationClient
-        implementation("androidx.compose.material3:material3:<latest_version>")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.0.0"))
     }
 
 
 
-}
