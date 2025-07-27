@@ -45,14 +45,30 @@ package com.example.autovault.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.autovault.ViewModel.ServiceReminderViewModel
 
 
+//@Composable
+//fun ServiceLogListScreen(viewModel: ServiceReminderViewModel) {
+//    val logs = viewModel.getServiceLogs()
+//
+//    Column(modifier = Modifier.padding(16.dp)) {
+//        Text("Service History", style = MaterialTheme.typography.headlineSmall)
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        logs.forEach {
+//            Text("- $it")
+//        }
+//    }
+//}
+
 @Composable
 fun ServiceLogListScreen(viewModel: ServiceReminderViewModel) {
-    val logs = viewModel.getServiceLogs()
+    val logs by viewModel.reminders.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Service History", style = MaterialTheme.typography.headlineSmall)

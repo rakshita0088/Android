@@ -228,6 +228,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.autovault.data.car_api.GetVehicleData
 import com.example.autovault.data.car_api.dto.VehicleData
 import com.example.autovault.ui.*
+import com.example.autovault.worker.ReminderServiceScheduler
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
@@ -237,6 +238,8 @@ class MainActivity : ComponentActivity() {
         val getVehicleData = GetVehicleData(this)
 
         setContent {
+
+            ReminderServiceScheduler(applicationContext)
 
             var vehicleData by remember {
                 mutableStateOf(

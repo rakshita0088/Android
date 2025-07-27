@@ -67,7 +67,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.autovault.R
 
-class ReminderWorker(private val context: Context, params: WorkerParameters) : Worker(context, params) {
+class ReminderServiceWorker(private val context: Context, params: WorkerParameters) : Worker(context, params) {
 
     override fun doWork(): Result {
         sendNotification("Vehicle Service Due Today!")

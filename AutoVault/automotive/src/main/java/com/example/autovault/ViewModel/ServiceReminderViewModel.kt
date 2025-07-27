@@ -36,18 +36,35 @@ package com.example.autovault.ViewModel
 //}
 
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+//import android.app.Application
+//import androidx.lifecycle.AndroidViewModel
+//
+//class ServiceReminderViewModel(application: Application) : AndroidViewModel(application) {
+//
+//    private val serviceLogs = mutableListOf<String>()
+//
+//    fun saveServiceLog(lastDate: String, nextDate: String) {
+//        serviceLogs.add("Last: $lastDate | Next: $nextDate")
+//    }
+//
+//    fun getServiceLogs(): List<String> {
+//        return serviceLogs
+//    }
+//}
 
-class ServiceReminderViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val serviceLogs = mutableListOf<String>()
+// ServiceReminderViewModel.kt
 
-    fun saveServiceLog(lastDate: String, nextDate: String) {
-        serviceLogs.add("Last: $lastDate | Next: $nextDate")
-    }
 
-    fun getServiceLogs(): List<String> {
-        return serviceLogs
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+class ServiceReminderViewModel : ViewModel() {
+    private val _reminders = MutableStateFlow<List<String>>(emptyList())
+    val reminders: StateFlow<List<String>> = _reminders
+
+    fun addReminder(date: String) {
+        _reminders.value = _reminders.value + date
     }
 }
