@@ -98,3 +98,26 @@ class ReminderServiceWorker(private val context: Context, params: WorkerParamete
         notificationManager.notify(notificationId, builder.build())
     }
 }
+ fun sendNotification(message: String, context: Context) {
+    val channelId = "service_reminder_channel"
+    val notificationId = 101
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+    ) return
+
+    val builder = NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setContentTitle("Service Reminder")
+        .setContentText(message)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+    val notificationManager = NotificationManagerCompat.from(context)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(channelId, "Service Reminders", NotificationManager.IMPORTANCE_HIGH)
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    notificationManager.notify(notificationId, builder.build())
+}

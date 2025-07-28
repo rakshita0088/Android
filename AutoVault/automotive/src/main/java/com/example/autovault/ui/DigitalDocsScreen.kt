@@ -128,156 +128,217 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
+
+
 @Composable
 fun DigitalDocsScreen() {
     val context = LocalContext.current
-    var selectedFileName by remember { mutableStateOf<String?>(null) }
-    var storedFileUri by remember { mutableStateOf<String?>(loadFileUri(context)) }
 
-    // Launcher to pick file
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-        onResult = { uri: Uri? ->
-            uri?.let {
-                context.contentResolver.takePersistableUriPermission(
-                    it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-                storeFileUri(context, it.toString())
-                storedFileUri = it.toString()
-                selectedFileName = getFileNameFromUri(context, it)
-            }
-        }
-    )
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Upload or View Car Documents", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Digital Docs", style = MaterialTheme.typography.headlineMedium)
 
         Button(onClick = {
-            // Allow any file type like PDF, JPEG, etc.
-            filePickerLauncher.launch(arrayOf("*/*"))
+            openDriveDoc(context, "https://drive.google.com/file/d/1f2N0OsLBltmX_tomAWCUZ4CWLXgOvlxt/view?usp=sharing")
         }) {
-            Text("Upload RC Document")
+            Text("Vehical Insurance")
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Button(onClick = {
-            storedFileUri?.let { uriString ->
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(uriString)
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                }
-                context.startActivity(intent)
-            }
-        }, enabled = storedFileUri != null) {
-            Text("View Insurance Document")
+            openDriveDoc(context, "https://drive.google.com/file/d/1wROnNWcdeq74bTRmgaFJAvu_GDIvalhF/view?usp=sharing")
+        }) {
+            Text("Driving License")
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        selectedFileName?.let {
-            Text("Selected: $it", style = MaterialTheme.typography.bodyMedium)
+        Button(onClick = {
+            openDriveDoc(context, "https://drive.google.com/file/d/1pjdfNAEL-93TLyMTS9BB2-q-JeMGoyOV/view?usp=sharing")
+        }) {
+            Text("Pollution_Certificate")
         }
 
-        if (storedFileUri == null) {
-            Text("No document uploaded yet", style = MaterialTheme.typography.bodySmall)
+        Button(onClick = {
+            openDriveDoc(context, "https://drive.google.com/file/d/1AEWuBcJPMA8akFS2ebr0QvwaYGgYhhjz/view?usp=sharing")
+        }) {
+            Text("RC")
         }
     }
 }
-private fun storeFileUri(context: Context, uri: String) {
-    val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
 
-    val sharedPrefs = EncryptedSharedPreferences.create(
-        context,
-        "secure_docs_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
-    sharedPrefs.edit().putString("document_uri", uri).apply()
+fun openDriveDoc(context: android.content.Context, url: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    context.startActivity(intent)
 }
 
-private fun loadFileUri(context: Context): String? {
-    val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
 
-    val sharedPrefs = EncryptedSharedPreferences.create(
-        context,
-        "secure_docs_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-
-    return sharedPrefs.getString("document_uri", null)
-}
-
-private fun getFileNameFromUri(context: Context, uri: Uri): String? {
-    val cursor = context.contentResolver.query(uri, null, null, null, null)
-    return cursor?.use {
-        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        it.moveToFirst()
-        it.getString(nameIndex)
-    }
-}
 //@Composable
 //fun DigitalDocsScreen() {
 //    val context = LocalContext.current
-//    var pickedUri by remember { mutableStateOf<Uri?>(null) }
+//    var selectedFileName by remember { mutableStateOf<String?>(null) }
+//    var storedFileUri by remember { mutableStateOf<String?>(loadFileUri(context)) }
 //
-//    // File picker launcher
-//    val launcher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent()
-//    ) { uri: Uri? ->
-//        pickedUri = uri
-//        uri?.let {
-//            Toast.makeText(context, "File Selected: $uri", Toast.LENGTH_SHORT).show()
+//    // Launcher to pick file
+//    val filePickerLauncher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.OpenDocument(),
+//        onResult = { uri: Uri? ->
+//            uri?.let {
+//                context.contentResolver.takePersistableUriPermission(
+//                    it,
+//                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                )
+//                storeFileUri(context, it.toString())
+//                storedFileUri = it.toString()
+//                selectedFileName = getFileNameFromUri(context, it)
+//            }
+//        }
+//    )
+//
+//    Column(modifier = Modifier.padding(16.dp)) {
+//        Text("Upload or View Car Documents", style = MaterialTheme.typography.titleLarge)
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//        Button(onClick = {
+//            // Allow any file type like PDF, JPEG, etc.
+//            filePickerLauncher.launch(arrayOf("*/*"))
+//        }) {
+//            Text("Upload RC Document")
+//        }
+//
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Button(onClick = {
+//            storedFileUri?.let { uriString ->
+//                val intent = Intent(Intent.ACTION_VIEW).apply {
+//                    data = Uri.parse(uriString)
+//                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                }
+//                context.startActivity(intent)
+//            }
+//        }, enabled = storedFileUri != null) {
+//            Text("View Insurance Document")
+//        }
+//
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        selectedFileName?.let {
+//            Text("Selected: $it", style = MaterialTheme.typography.bodyMedium)
+//        }
+//
+//        if (storedFileUri == null) {
+//            Text("No document uploaded yet", style = MaterialTheme.typography.bodySmall)
 //        }
 //    }
+//}
+//private fun storeFileUri(context: Context, uri: String) {
+//    val masterKey = MasterKey.Builder(context)
+//        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+//        .build()
+//
+//    val sharedPrefs = EncryptedSharedPreferences.create(
+//        context,
+//        "secure_docs_prefs",
+//        masterKey,
+//        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+//        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+//    )
+//
+//    sharedPrefs.edit().putString("document_uri", uri).apply()
+//}
+//
+//private fun loadFileUri(context: Context): String? {
+//    val masterKey = MasterKey.Builder(context)
+//        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+//        .build()
+//
+//    val sharedPrefs = EncryptedSharedPreferences.create(
+//        context,
+//        "secure_docs_prefs",
+//        masterKey,
+//        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+//        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+//    )
+//
+//    return sharedPrefs.getString("document_uri", null)
+//}
+//
+//private fun getFileNameFromUri(context: Context, uri: Uri): String? {
+//    val cursor = context.contentResolver.query(uri, null, null, null, null)
+//    return cursor?.use {
+//        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+//        it.moveToFirst()
+//        it.getString(nameIndex)
+//    }
+//}
+
+
+
+//import androidx.compose.foundation.layout.*
+//import androidx.compose.material3.*
+//import androidx.compose.runtime.*
+//import androidx.compose.ui.Modifier
+//import androidx.compose.ui.unit.dp
+//import androidx.navigation.NavController
+//import com.example.autovault.ViewModel.DigitalDocsViewModel
+//
+//
+//@Composable
+//fun DigitalDocsListScreen(navController: NavController, viewModel: DigitalDocsViewModel) {
+//    var title by remember { mutableStateOf("") }
+//    var url by remember { mutableStateOf("") }
 //
 //    Column(
 //        modifier = Modifier
 //            .fillMaxSize()
 //            .padding(16.dp),
-//        verticalArrangement = Arrangement.spacedBy(16.dp)
+//        verticalArrangement = Arrangement.spacedBy(12.dp)
 //    ) {
-//        Text("Digital Document Vault", style = MaterialTheme.typography.headlineSmall)
+//        Text("Digital Documents", style = MaterialTheme.typography.headlineMedium)
 //
-//        // Pick PDF Button
-//        Button(onClick = {
-//            launcher.launch("application/pdf") // open file picker for PDF only
-//        }) {
-//            Text("Upload PDF Document")
+//        OutlinedTextField(
+//            value = title,
+//            onValueChange = { title = it },
+//            label = { Text("Document Title") },
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//
+//        OutlinedTextField(
+//            value = url,
+//            onValueChange = { url = it },
+//            label = { Text("Google Drive URL") },
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//
+//        Button(
+//            onClick = {
+//                if (title.isNotBlank() && url.isNotBlank()) {
+//                    viewModel.addDocument(com.example.autovault.data.DigitalDoc(title, url))
+//                    title = ""
+//                    url = ""
+//                }
+//            },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text("Add Document")
 //        }
 //
-//        // View selected PDF
-//        pickedUri?.let { uri ->
-//            Button(onClick = {
-//                val viewIntent = Intent(Intent.ACTION_VIEW).apply {
-//                    setDataAndType(uri, "application/pdf")
-//                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-//                }
-//
-//                try {
-//                    context.startActivity(viewIntent)
-//                } catch (e: Exception) {
-//                    Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
-//                }
-//            }) {
-//                Text("View Uploaded Document")
-//            }
+//        Button(
+//            onClick = {
+//                navController.navigate("details")
+//            },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Text("View Documents")
 //        }
 //    }
 //}
+
+

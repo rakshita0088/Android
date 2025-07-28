@@ -57,7 +57,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
-    implementation(libs.androidx.lifecycle.viewmodel.android) // ✅ FIXED
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.androidx.appcompat) // ✅ FIXED
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")

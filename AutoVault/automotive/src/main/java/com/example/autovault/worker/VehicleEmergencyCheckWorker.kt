@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.autovault.data.car_api.GetVehicleData
-import com.example.autovaultlistener.repository.VehicleDataRepository
+//import com.example.autovaultlistener.repository.VehicleDataRepository
 
 class VehicleEmergencyCheckWorker(
     private val context: Context,

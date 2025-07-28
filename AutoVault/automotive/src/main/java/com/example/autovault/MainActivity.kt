@@ -229,6 +229,8 @@ import com.example.autovault.data.car_api.GetVehicleData
 import com.example.autovault.data.car_api.dto.VehicleData
 import com.example.autovault.ui.*
 import com.example.autovault.worker.ReminderServiceScheduler
+import com.example.autovault.worker.VehicleEmergencyCheckScheduler
+import com.example.autovault.worker.sendNotification
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.P)
@@ -239,7 +241,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+            sendNotification("Vehicle Service Due Today!", applicationContext)
+
             ReminderServiceScheduler(applicationContext)
+            VehicleEmergencyCheckScheduler(applicationContext)
 
             var vehicleData by remember {
                 mutableStateOf(
@@ -257,7 +262,5 @@ class MainActivity : ComponentActivity() {
 
 
 }
-
-
 
 
