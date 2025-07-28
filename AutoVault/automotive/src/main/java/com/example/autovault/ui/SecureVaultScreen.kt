@@ -723,8 +723,7 @@ fun SecureVaultScreen(navController: NavController) {
 
     var savedEntries by remember { mutableStateOf(loadSavedEntries(context)) }
 
-    val correctPin = "1234" // 🔐 Change this to your master pin
-
+    val correctPin = "0808"
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
