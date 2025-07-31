@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.example.autovault.data.car_api.dto.EmergencyAlert
 import com.example.autovault.data.car_api.dto.VehicleData
+import com.example.autovault.location.LocationTracker
 import com.example.autovault.network.RetrofitClient
 import com.example.autovault.util.LocationLiveTracker
 import com.google.android.gms.location.LocationCallback
@@ -26,7 +27,10 @@ import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 //@Composable
@@ -111,7 +115,8 @@ fun EmergencyPanelScreen(context: Context) {
         permissionGranted = granted
     }
 
-    var locationTracker: LocationLiveTracker? by remember { mutableStateOf(null) }
+    val context = LocalContext.current
+    val locationTracker = remember { LocationTracker(context) }
 
     Column(
         modifier = Modifier
@@ -119,25 +124,24 @@ fun EmergencyPanelScreen(context: Context) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Button(
-            onClick = {
-                if (ActivityCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                    return@Button
-                }
+        Button(onClick = {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                return@Button
+            }
 
-                locationTracker = LocationLiveTracker(context) { location ->
-                    val latitude = location.latitude
-                    val longitude = location.longitude
+            // Coroutine scope for location
+            CoroutineScope(Dispatchers.Main).launch {
+                val location = locationTracker.getCurrentLocation()
 
-                    // 🔁 New EmergencyAlert wrapped in VehicleData
+                if (location != null && location.latitude != 0.0 && location.longitude != 0.0) {
                     val emergency = EmergencyAlert(
-                        latitude = latitude,
-                        longitude = longitude,
+                        latitude = location.latitude,
+                        longitude = location.longitude,
                         message = "🚨 Emergency! Help needed!",
                         contactNumber = "8446309202"
                     )
@@ -154,20 +158,12 @@ fun EmergencyPanelScreen(context: Context) {
                             println("❌ Failed to send SOS: ${t.message}")
                         }
                     })
-
-                    locationTracker?.stopTracking()
                 }
-
-                locationTracker?.startTracking()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            }
+        }) {
             Text("🚨 Send SOS Alert")
         }
 
-        if (isLocationSent) {
-            Text("✅ Location sent successfully!", modifier = Modifier.padding(top = 16.dp))
-        }
     }
 }
 //@Composable
