@@ -5,5 +5,7 @@ data class  VehicleData (
     val flatTyre: FlatTyre = FlatTyre(),
     val overheatingEngine: OverheatingEngine = OverheatingEngine(),
     val brakeProblem: BrakeProblems = BrakeProblems(),
-    val headlightFailure: HeadlightFailure = HeadlightFailure()
-    )
+    val headlightFailure: HeadlightFailure = HeadlightFailure(),
+    val emergencyAlert: EmergencyAlert = EmergencyAlert()
+
+)

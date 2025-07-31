@@ -8,6 +8,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +16,7 @@ import com.example.autovault.ViewModel.ServiceReminderViewModel
 import com.example.autovault.data.car_api.dto.VehicleData
 import com.example.autovault.ui.DashboardScreen
 import com.example.autovault.ui.DigitalDocsScreen
+import com.example.autovault.ui.EmergencyPanelScreen
 import com.example.autovault.ui.QuickFixHelpScreen
 import com.example.autovault.ui.SecureVaultScreen
 import com.example.autovault.ui.ServiceRemindersScreen
@@ -141,6 +143,13 @@ fun AutoVaultApp(vehicleData: VehicleData) {
                     viewModel = viewModel
                 )
             }
+
+            composable("emergencySOS") {
+                val context = LocalContext.current
+                EmergencyPanelScreen(context)
+            }
+
+
 
             composable("setup") {
                 SetupScreen()
