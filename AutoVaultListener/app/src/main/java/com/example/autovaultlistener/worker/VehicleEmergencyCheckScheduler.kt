@@ -2,6 +2,7 @@ package com.example.autovaultlistener.worker
 
 import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 
@@ -16,3 +17,6 @@ fun VehicleEmergencyCheckScheduler(context: Context) {
     workRequest
     )
 }
+//    val workRequest = OneTimeWorkRequestBuilder<VehicleEmergencyCheckWorker>().build()
+//    WorkManager.getInstance(context).enqueue(workRequest)
+//}

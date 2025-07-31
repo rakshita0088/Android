@@ -17,7 +17,7 @@ interface JSONBinApi {
             @Body vehicleHealthStatus: VehicleData
         ): Response<JsonElement>
 
-        @GET("v3/b/{binId}/latest")
+        @GET("v3/b/{binId}")
         suspend fun getVehicleHealthStatus(
             @Path("binId") binId: String,
             @Header("X-Master-Key") apiKey: String

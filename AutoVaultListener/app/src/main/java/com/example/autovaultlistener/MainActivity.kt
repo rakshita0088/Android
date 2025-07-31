@@ -49,6 +49,8 @@ class MainActivity : ComponentActivity() {
 
         VehicleEmergencyCheckScheduler(applicationContext)
 
+
+
         // Set Compose UI content
         setContent {
             val viewModel = VehicleViewModel()
