@@ -43,15 +43,11 @@ class MainActivity : ComponentActivity() {
             arrayOf(
                 Manifest.permission.SEND_SMS,
                 Manifest.permission.READ_SMS,
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.POST_NOTIFICATIONS
+                Manifest.permission.RECEIVE_SMS
             )
         )
 
-
         VehicleEmergencyCheckScheduler(applicationContext)
-
-
 
         // Set Compose UI content
         setContent {

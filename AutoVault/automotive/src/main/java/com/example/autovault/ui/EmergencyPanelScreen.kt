@@ -33,6 +33,70 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+
+//@Composable
+//fun EmergencyPanelScreen(context: Context) {
+//    var isLocationSent by remember { mutableStateOf(false) }
+//    var permissionGranted by remember { mutableStateOf(false) }
+//
+//    val locationPermissionLauncher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { granted ->
+//        permissionGranted = granted
+//    }
+//
+//    val context = LocalContext.current
+//    val locationTracker = remember { LocationTracker(context) }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(16.dp),
+//        verticalArrangement = Arrangement.Center
+//    ) {
+//        Button(onClick = {
+//            if (ActivityCompat.checkSelfPermission(
+//                    context,
+//                    Manifest.permission.ACCESS_FINE_LOCATION
+//                ) != PackageManager.PERMISSION_GRANTED
+//            ) {
+//                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+//                return@Button
+//            }
+//
+//            // Coroutine scope for location
+//            CoroutineScope(Dispatchers.Main).launch {
+//                val location = locationTracker.getCurrentLocation()
+//
+//                if (location != null && location.latitude != 0.0 && location.longitude != 0.0) {
+//                    val emergency = EmergencyAlert(
+//                        latitude = location.latitude,
+//                        longitude = location.longitude,
+//                        message = "🚨 Emergency! Help needed!",
+//                        contactNumber = "8446309202"
+//                    )
+//
+//                    val vehicleData = VehicleData(emergencyAlert = emergency)
+//
+//                    RetrofitClient.api.sendSOS(vehicleData).enqueue(object : Callback<Void> {
+//                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+//                            println("✅ SOS sent successfully!")
+//                            isLocationSent = true
+//                        }
+//
+//                        override fun onFailure(call: Call<Void>, t: Throwable) {
+//                            println("❌ Failed to send SOS: ${t.message}")
+//                        }
+//                    })
+//                }
+//            }
+//        }) {
+//            Text("🚨 Send SOS Alert")
+//        }
+//
+//    }
+//}
+
 //@Composable
 //fun EmergencyPanelScreen(context: Context) {
 //    var isLocationSent by remember { mutableStateOf(false) }
@@ -67,13 +131,12 @@ import kotlinx.coroutines.launch
 //                    val latitude = location.latitude
 //                    val longitude = location.longitude
 //
-//
+//                    // 🔁 New EmergencyAlert wrapped in VehicleData
 //                    val emergency = EmergencyAlert(
 //                        latitude = latitude,
 //                        longitude = longitude,
 //                        message = "🚨 Emergency! Help needed!",
-//                        contactNumbers = "9036417577",
-//                        isButtonClicked = "Yes"
+//                        contactNumber = "8446309202"
 //                    )
 //
 //                    val vehicleData = VehicleData(emergencyAlert = emergency)
@@ -104,10 +167,12 @@ import kotlinx.coroutines.launch
 //        }
 //    }
 //}
+
 @Composable
 fun EmergencyPanelScreen(context: Context) {
     var isLocationSent by remember { mutableStateOf(false) }
     var permissionGranted by remember { mutableStateOf(false) }
+    var locationTracker: LocationLiveTracker? by remember { mutableStateOf(null) }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -115,33 +180,34 @@ fun EmergencyPanelScreen(context: Context) {
         permissionGranted = granted
     }
 
-    val context = LocalContext.current
-    val locationTracker = remember { LocationTracker(context) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Button(onClick = {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                return@Button
-            }
+        Button(
+            onClick = {
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    return@Button
+                }
 
-            // Coroutine scope for location
-            CoroutineScope(Dispatchers.Main).launch {
-                val location = locationTracker.getCurrentLocation()
+                locationTracker = LocationLiveTracker(context) { location ->
+                    val latitude = location.latitude
+                    val longitude = location.longitude
 
-                if (location != null && location.latitude != 0.0 && location.longitude != 0.0) {
+                    if (latitude == 0.0 && longitude == 0.0) {
+                        return@LocationLiveTracker // Prevent sending empty locations
+                    }
+
                     val emergency = EmergencyAlert(
-                        latitude = location.latitude,
-                        longitude = location.longitude,
+                        latitude = latitude,
+                        longitude = longitude,
                         message = "🚨 Emergency! Help needed!",
                         contactNumber = "8446309202"
                     )
@@ -150,130 +216,50 @@ fun EmergencyPanelScreen(context: Context) {
 
                     RetrofitClient.api.sendSOS(vehicleData).enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            println("✅ SOS sent successfully!")
+                            // Update state from main thread
                             isLocationSent = true
                         }
 
                         override fun onFailure(call: Call<Void>, t: Throwable) {
-                            println("❌ Failed to send SOS: ${t.message}")
+                            // Do nothing for now
                         }
                     })
+
+                    locationTracker?.stopTracking()
                 }
-            }
-        }) {
+
+                locationTracker?.startTracking()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("🚨 Send SOS Alert")
         }
 
+        if (isLocationSent) {
+            Text("✅ Location sent successfully!", modifier = Modifier.padding(top = 16.dp))
+        }
     }
 }
+
 //@Composable
-//fun SendSOSScreen() {
-//    val context = LocalContext.current
-//    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+//fun EmergencyPanelScreen(context: Context) {
 //    var isLocationSent by remember { mutableStateOf(false) }
+//    var permissionGranted by remember { mutableStateOf(false) }
 //
 //    val locationPermissionLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestPermission(),
-//        onResult = { granted ->
-//            if (!granted) {
-//                Toast.makeText(context, "Location permission is required.", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    )
-//
-//    Column(modifier = Modifier
-//        .fillMaxSize()
-//        .padding(16.dp)) {
-//
-//        Button(
-//            onClick = {
-//                if (ActivityCompat.checkSelfPermission(
-//                        context,
-//                        Manifest.permission.ACCESS_FINE_LOCATION
-//                    ) != PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-//                    return@Button
-//                }
-//
-//                val locationRequest = LocationRequest.create().apply {
-//                    priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//                    interval = 1000
-//                    fastestInterval = 500
-//                    numUpdates = 1
-//                }
-//
-//                val locationCallback = object : LocationCallback() {
-//                    override fun onLocationResult(result: LocationResult) {
-//                        val location = result.lastLocation
-//                        if (location != null) {
-//                            val emergency = EmergencyAlert(
-//                                latitude = location.latitude,
-//                                longitude = location.longitude,
-//                                message = "🚨 Emergency! Help needed!",
-//                                contactNumber = "8446309202"
-//                            )
-//                            // Proceed with sending this
-//                        }
-//                    }
-//                }
-//
-//                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-//
-//
-//                val vehicleData = VehicleData(emergencyAlert = emergency)
-//
-//                        RetrofitClient.api.sendSOS(vehicleData).enqueue(object : Callback<Void> {
-//                            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-//                                Toast.makeText(context, "✅ SOS sent successfully!", Toast.LENGTH_SHORT).show()
-//                                isLocationSent = true
-//                            }
-//
-//                            override fun onFailure(call: Call<Void>, t: Throwable) {
-//                                Toast.makeText(context, "❌ SOS failed: ${t.message}", Toast.LENGTH_SHORT).show()
-//                            }
-//                        })
-//                    } else {
-//                        Toast.makeText(context, "❗ Location not ready. Try again.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }.addOnFailureListener {
-//                    Toast.makeText(context, "❌ Could not get location.", Toast.LENGTH_SHORT).show()
-//                }
-//
-//            },
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text("🚨 Send SOS Alert")
-//        }
-//
-//        if (isLocationSent) {
-//            Text(
-//                text = "📍 Location sent successfully!",
-//                modifier = Modifier.padding(top = 16.dp),
-//                color = MaterialTheme.colorScheme.primary
-//            )
-//        }
+//        ActivityResultContracts.RequestPermission()
+//    ) { granted ->
+//        permissionGranted = granted
 //    }
-//}
-//@Composable
-//fun EmergencyPanelScreen() {
-//    val context = LocalContext.current
-//    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-//    var isLocationSent by remember { mutableStateOf(false) }
 //
-//    val locationPermissionLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestPermission(),
-//        onResult = { granted ->
-//            if (!granted) {
-//                Toast.makeText(context, "Location permission is required.", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    )
+//    var locationTracker: LocationLiveTracker? by remember { mutableStateOf(null) }
 //
-//    Column(modifier = Modifier
-//        .fillMaxSize()
-//        .padding(16.dp)) {
-//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(16.dp),
+//        verticalArrangement = Arrangement.Center
+//    ) {
 //        Button(
 //            onClick = {
 //                if (ActivityCompat.checkSelfPermission(
@@ -285,43 +271,34 @@ fun EmergencyPanelScreen(context: Context) {
 //                    return@Button
 //                }
 //
-//                val locationRequest = LocationRequest.create().apply {
-//                    priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//                    interval = 1000
-//                    fastestInterval = 500
-//                    numUpdates = 1
-//                }
+//                locationTracker = LocationLiveTracker(context) { location ->
+//                    val latitude = location.latitude
+//                    val longitude = location.longitude
 //
-//                val locationCallback = object : LocationCallback() {
-//                    override fun onLocationResult(result: LocationResult) {
-//                        val location = result.lastLocation
-//                        if (location != null && location.latitude != 0.0 && location.longitude != 0.0) {
-//                            val emergency = EmergencyAlert(
-//                                latitude = location.latitude,
-//                                longitude = location.longitude,
-//                                message = "🚨 Emergency! Help needed!",
-//                                contactNumber = "8446309202"
-//                            )
+//                    // Prepare emergency object
+//                    val emergency = EmergencyAlert(
+//                        latitude = latitude,
+//                        longitude = longitude,
+//                        message = "🚨 Emergency! Help needed!",
+//                        contactNumber = "8446309202"
+//                    )
 //
-//                            val vehicleData = VehicleData(emergencyAlert = emergency)
+//                    val vehicleData = VehicleData(emergencyAlert = emergency)
 //
-//                            RetrofitClient.api.sendSOS(vehicleData).enqueue(object : Callback<Void> {
-//                                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-//                                    Toast.makeText(context, "✅ SOS sent successfully!", Toast.LENGTH_SHORT).show()
-//                                    isLocationSent = true
-//                                }
-//
-//                                override fun onFailure(call: Call<Void>, t: Throwable) {
-//                                    Toast.makeText(context, "❌ SOS failed: ${t.message}", Toast.LENGTH_SHORT).show()
-//                                }
-//                            })
-//                        } else {
-//                            Toast.makeText(context, "❗ Location not ready. Try again.", Toast.LENGTH_SHORT).show()
+//                    RetrofitClient.api.sendSOS(vehicleData).enqueue(object : Callback<Void> {
+//                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+//                            isLocationSent = true
 //                        }
-//                    }
+//
+//                        override fun onFailure(call: Call<Void>, t: Throwable) {
+//                            isLocationSent = false
+//                        }
+//                    })
+//
+//                    locationTracker?.stopTracking()
 //                }
 //
-//                fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+//                locationTracker?.startTracking()
 //            },
 //            modifier = Modifier.fillMaxWidth()
 //        ) {
@@ -329,11 +306,7 @@ fun EmergencyPanelScreen(context: Context) {
 //        }
 //
 //        if (isLocationSent) {
-//            Text(
-//                text = "📍 Location sent successfully!",
-//                modifier = Modifier.padding(top = 16.dp),
-//                color = MaterialTheme.colorScheme.primary
-//            )
+//            Text("✅ Location sent successfully!", modifier = Modifier.padding(top = 16.dp))
 //        }
 //    }
 //}
