@@ -24,6 +24,7 @@ class VehicleEmergencyCheckWorker(
     override suspend fun doWork(): Result {
         return try {
             val health = repository.subscribeVehicleProperties()
+//            val viewModel = Qui
             health.let {
                 if (it.batteryLevel.value < 20) {
                     showBatteryLowNotification(context, it.batteryLevel.value)

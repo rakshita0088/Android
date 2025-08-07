@@ -2,8 +2,8 @@ package com.example.autovaultlistener.data.dto
 
 class EmergencyAlert(
     val message: String = "Emergency!! Help Me!!",
-    val longitude: Double = 0.0,
-    val latitude: Double = 0.0,
+    val longitude: Double = 12.9110,
+    val latitude: Double = 77.5796,
     val contactNumber: String = "8446309202",
     var isButtonClicked: String = "Yes"
 )

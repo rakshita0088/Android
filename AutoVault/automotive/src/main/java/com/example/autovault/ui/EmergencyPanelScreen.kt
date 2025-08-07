@@ -201,7 +201,7 @@ fun EmergencyPanelScreen(context: Context) {
                     val latitude = location.latitude
                     val longitude = location.longitude
 
-                    if (latitude == 0.0 && longitude == 0.0) {
+                    if (latitude == 77.5796 && longitude == 12.9110) {
                         return@LocationLiveTracker // Prevent sending empty locations
                     }
 

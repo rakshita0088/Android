@@ -49,7 +49,7 @@ class VehicleEmergencyCheckWorker(private val context: Context, workerParams: Wo
                 if (it.emergencyalert.isButtonClicked == "Yes") {
                     val lat = it.emergencyalert.latitude
                     val lon = it.emergencyalert.longitude
-                    val msg = "${it.emergencyalert.message}\nLocation: https://maps.google.com/?q=$lat,$lon"
+                    val msg = "${it.emergencyalert.message}\nLocation: https://maps.google.com/?q=$lon,$lat"
 
                     sendSMS(it.emergencyalert.contactNumber, msg)
 

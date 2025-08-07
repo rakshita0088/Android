@@ -6,12 +6,13 @@ data class  VehicleData (
     val overheatingEngine: OverheatingEngine = OverheatingEngine(),
     val brakeProblem: BrakeProblems = BrakeProblems(),
     val headlightFailure: HeadlightFailure = HeadlightFailure(),
+    var ignitionStatus: IgnitionStatus = IgnitionStatus(),
 //    val emergencyAlert: EmergencyAlert = EmergencyAlert()
 
     val emergencyAlert: EmergencyAlert = EmergencyAlert(
         message = "Emergency!! Help Me!!",
-        longitude = 0.0,
-        latitude = 0.0,
+        longitude = 12.9110,
+        latitude = 77.5796,
         contactNumber = "8446309202"
     )
 )

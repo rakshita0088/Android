@@ -21,6 +21,17 @@ package="com.example.autovault">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 
+    <uses-permission android:name="android.car.permission.ACCESS_CAR_PROPERTY"/>
+    <uses-permission android:name="android.car.permission.CAR_ENERGY"/>
+    <uses-permission android:name="android.car.permission.CAR_FUEL"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.car.permission.READ_CAR_EVINFORMATION"/>
+    <uses-permission android:name="android.car.permission.READ_CAR_ENERGY"/>
+    <uses-permission android:name="android.car.permission.READ_CAR_PROPERTY"/>
+    <uses-permission android:name="android.car.permission.VEHICLE_PROPERTIES" />
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
+
+
 
 
     <application

@@ -10,8 +10,12 @@ import com.example.autovault.data.car_api.dto.BatteryLevel
 import com.example.autovault.data.car_api.dto.BrakeProblems
 import com.example.autovault.data.car_api.dto.FlatTyre
 import com.example.autovault.data.car_api.dto.HeadlightFailure
+import com.example.autovault.data.car_api.dto.IgnitionStatus
 import com.example.autovault.data.car_api.dto.OverheatingEngine
 import com.example.autovault.data.car_api.dto.VehicleData
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
@@ -87,5 +91,93 @@ class GetVehicleData(private val context: Context
                 value = 100
             )
         )
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun fetchData(): Flow<VehicleData> = callbackFlow {
+        val currentStatus = VehicleData() // You may use a mutable builder if needed
 
+        val carProperty = CarProperty.Builder(context)
+            .addProperty(VehiclePropertyIds.PARKING_BRAKE_ON)
+            .addProperty(VehiclePropertyIds.GEAR_SELECTION)
+            .addProperty(VehiclePropertyIds.HVAC_FAN_SPEED)
+            .addProperty(VehiclePropertyIds.HVAC_TEMPERATURE_SET)
+            .addProperty(VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE)
+            .addProperty(VehiclePropertyIds.IGNITION_STATE)
+            .addProperty(VehiclePropertyIds.NIGHT_MODE)
+            .setCallBack { propertyId, value ->
+                when (propertyId) {
+//                    VehiclePropertyIds.PARKING_BRAKE_ON -> {
+//                        currentStatus.parkingBrakeStatus = ParkingBrakeStatus(
+//                            propertyId = propertyId,
+//                            status = "OK",
+//                            value = (value as? Boolean) ?: false ,
+//                            unit = "ON/OFF"
+//                        )
+//                    }
+
+//                    VehiclePropertyIds.GEAR_SELECTION -> {
+//                        currentStatus.gearStatus = GearStatus(
+//                            propertyId,
+//                            status = "OK",
+//                            value = value as? Int ?: 0,
+//                            unit = "GEAR"
+//                        )
+//                    }
+
+//                    VehiclePropertyIds.HVAC_FAN_SPEED -> {
+//                        currentStatus.fanSpeedStatus = HvacFanSpeedStatus(
+//                            propertyId,
+//                            "OK",
+//                            value as? Int ?: 0,
+//                            "LEVEL"
+//                        )
+//                    }
+
+//                    VehiclePropertyIds.HVAC_TEMPERATURE_SET -> {
+//                        currentStatus.temperatureStatus = HvacTemperatureStatus(
+//                            propertyId,
+//                            "OK",
+//                            (value as? Float)?.toDouble() ?: 0.0,
+//                            "°C"
+//                        )
+//                    }
+
+//                    VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE -> {
+//                        currentStatus.outsideTempStatus = OutsideTempStatus(
+//                            propertyId,
+//                            "OK",
+//                            (value as? Float)?.toDouble() ?: 0.0,
+//                            "°C"
+//                        )
+//                    }
+
+                    VehiclePropertyIds.IGNITION_STATE -> {
+                        currentStatus.ignitionStatus = IgnitionStatus(
+                            propertyId,
+                            status = "OK",
+                            value = value as? Int ?: 0,
+                            unit = "STATE"
+                        )
+                    }
+
+//                    VehiclePropertyIds.NIGHT_MODE -> {
+//                        currentStatus.nightModeStatus = NightModeStatus(
+//                            propertyId,
+//                            status = "OK",
+//                            value = value as? Boolean ?: false,
+//                            unit = "ON/OFF"
+//                        )
+//                    }
+                }
+
+
+                trySend(currentStatus.copy())
+            }
+            .build()
+
+        carProperty.startListening()
+
+        awaitClose {
+            carProperty.stopListening()
+        }
+    }
 }

@@ -225,6 +225,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.autovault.ViewModel.QuickFixHelpViewModel
 import com.example.autovault.data.car_api.GetVehicleData
 import com.example.autovault.data.car_api.dto.VehicleData
 import com.example.autovault.ui.*
@@ -238,25 +239,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val getVehicleData = GetVehicleData(this)
+//        val viewModel = QuickFixHelpViewModel(getVehicleData)
+//        val vehicleData = viewModel.state.value.status
+
 
         setContent {
 
             sendNotification("Vehicle Service Due Today!", applicationContext)
 
-            ReminderServiceScheduler(applicationContext)
-            VehicleEmergencyCheckScheduler(applicationContext)
+//            ReminderServiceScheduler(applicationContext)
+//            VehicleEmergencyCheckScheduler(applicationContext)
 
-            var vehicleData by remember {
-                mutableStateOf(
-                    VehicleData() // use a fallback or loading state
-                )
-            }
+//            var vehicleData by remember {
+//                mutableStateOf(
+//                    VehicleData() // use a fallback or loading state
+//                )
+//            }
 
             LaunchedEffect(Unit) {
-                val result = getVehicleData.subscribeVehicleProperties()
-                vehicleData = result
+//                val result = getVehicleData.subscribeVehicleProperties()
+//                vehicleData = result
             }
-            AutoVaultApp(vehicleData)
+            AutoVaultApp(getVehicleData)
         }
     }
 

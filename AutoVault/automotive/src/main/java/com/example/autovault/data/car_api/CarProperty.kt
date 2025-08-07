@@ -1,5 +1,6 @@
 package com.example.autovault.data.car_api
 
+import androidx.annotation.RequiresApi
 import android.car.Car
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -7,7 +8,6 @@ import android.car.hardware.property.Subscription
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import java.util.concurrent.Executor
 
 class CarProperty private constructor(
@@ -29,33 +29,68 @@ class CarProperty private constructor(
 
     }
 
+//    fun startListening(){
+//        car = Car.createCar(context)
+//
+//        car?.let { carNonNull ->
+//            carPropertyManager = carNonNull.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
+//
+//            try {
+//                val subscriptions = propertyIds.map { id ->
+//                    Subscription.Builder(id)
+//                        .setUpdateRateHz(CarPropertyManager.SENSOR_RATE_ONCHANGE)
+//                        .setVariableUpdateRateEnabled(false)
+//                        .build()
+//
+//                }
+//
+//                val executor: Executor = context.mainExecutor
+//
+//                carPropertyManager?.subscribePropertyEvents(subscriptions, executor, carPropertyEventCallback)
+//            } catch (e: Exception) {
+//                Log.e("CarProperty", "Subscription creation failed: ${e.message}", e)
+//            }
+//        }
+//    }
+
     @RequiresApi(Build.VERSION_CODES.P)
-    fun startListening(){
+    @Suppress("DEPRECATION") // To suppress the deprecation warning
+    fun startListening() {
         car = Car.createCar(context)
 
         car?.let { carNonNull ->
             carPropertyManager = carNonNull.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
-
-            try {
-                val subscriptions = propertyIds.map { id ->
-                    val allConfigs = carPropertyManager?.propertyList
-                    allConfigs?.forEach {
-                        Log.d("CarProperty", "Supported Property ID: ${it.propertyId}")
-                    }
-                    Subscription.Builder(id)
-                        .setUpdateRateHz(CarPropertyManager.SENSOR_RATE_ONCHANGE)
-                        .setVariableUpdateRateEnabled(false)
-                        .build()
-                }
-
-                val executor: Executor = context.mainExecutor
-
-                carPropertyManager?.subscribePropertyEvents(subscriptions, executor, carPropertyEventCallback)
-            } catch (e: Exception) {
-                Log.e("CarProperty", "Subscription creation failed: ${e.message}", e)
+            propertyIds.forEach { id ->
+                carPropertyManager?.registerCallback(
+                    carPropertyEventCallback,
+                    id,
+                    CarPropertyManager.SENSOR_RATE_ONCHANGE
+                )
             }
+
+//            try {
+//                val executor: Executor = context.mainExecutor
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+//                    // Use new subscription API (Android 14+)
+//                    val subscriptions = propertyIds.map { id ->
+//                        Subscription.Builder(id)
+//                            .setUpdateRateHz(CarPropertyManager.SENSOR_RATE_ONCHANGE)
+//                            .setVariableUpdateRateEnabled(false)
+//                            .build()
+//                    }
+//                    carPropertyManager?.subscribePropertyEvents(subscriptions, executor, carPropertyEventCallback)
+//                } else {
+//                    // Fallback for Android 13 and below
+//
+//                }
+//
+//            } catch (e: Exception) {
+//                Log.e("CarProperty", "Subscription creation failed: ${e.message}", e)
+//            }
         }
     }
+
 
     fun stopListening(){
         try {

@@ -34,6 +34,8 @@ android {
         jvmTarget = "17"
     }
 
+    useLibrary ("android.car")
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -76,7 +78,7 @@ dependencies {
     // AndroidX Security (Encrypted file store)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
 
         implementation("com.google.code.gson:gson:2.10.1")
@@ -86,6 +88,7 @@ dependencies {
 
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
 
 
 
