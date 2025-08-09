@@ -1,10 +1,9 @@
 package com.example.car.data.car_api
 
-import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.car.ui.AppContextProvider
 import com.google.android.gms.location.*
@@ -15,14 +14,15 @@ import androidx.compose.runtime.State
 import com.example.car.data.car_api.dto.VehicleData
 import com.example.car.data.car_api.remote.GetVehicleData
 
-
-class SpeedViewModel(application: Application) : AndroidViewModel(application) {
+class SpeedViewModel : ViewModel() {
 
     private val getVehicleData = GetVehicleData(AppContextProvider.get())
     private val _vehicleData = mutableStateOf<VehicleData?>(null)
     val vehicleData: State<VehicleData?> = _vehicleData
 
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
+    // Use AppContextProvider instead of Application parameter
+    private val fusedLocationClient =
+        LocationServices.getFusedLocationProviderClient(AppContextProvider.get())
 
     private val _speed = MutableStateFlow(0)
     val speed: StateFlow<Int> = _speed
@@ -30,11 +30,6 @@ class SpeedViewModel(application: Application) : AndroidViewModel(application) {
     private val _speedLimit = MutableStateFlow(0)
     val speedLimit: StateFlow<Int> = _speedLimit
 
-    private val locationRequest = LocationRequest.create().apply {
-        interval = 2000
-        fastestInterval = 1000
-        priority = Priority.PRIORITY_HIGH_ACCURACY
-    }
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
@@ -46,7 +41,7 @@ class SpeedViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        startLocationUpdates()
+
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -58,17 +53,10 @@ class SpeedViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    @Suppress("MissingPermission")
-    private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-    }
+
 
     fun setSpeedLimit(limit: Int) {
         _speedLimit.value = limit
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
 }

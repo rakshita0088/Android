@@ -2,15 +2,15 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.21" // ✅
-//    id("com.google.gms.google-services") version "4.4.3" apply false
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.carrrental"
+    namespace = "com.example.car"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.carrrental"
+        applicationId = "com.example.car"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -47,11 +47,17 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(libs.androidx.appcompat)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+
+    implementation("com.google.firebase:firebase-database-ktx:20.2.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.7.0")
+
 
 }
 
