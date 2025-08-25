@@ -42,6 +42,7 @@ private const val CHANNEL_ID = "speed_warning_channel"
  */
 fun provideDefaultSpeedViewModelFactory(context: Context): ViewModelProvider.Factory {
     return object : ViewModelProvider.Factory {
+        @RequiresApi(Build.VERSION_CODES.P)
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             // Create concrete repository implementations (uses AppContextProvider inside impl)

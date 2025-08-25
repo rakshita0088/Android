@@ -2,7 +2,9 @@ package com.example.car.presentation.viewmodel
 
 
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.car.domain.usecase.ObserveSpeedLimitUseCase
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
  * This ViewModel purposely does not directly depend on Android framework classes
  * except for logging — data access lives in data layer.
  */
+@RequiresApi(Build.VERSION_CODES.P)
 class SpeedViewModel(
     private val observeSpeedLimitUseCase: ObserveSpeedLimitUseCase,
     private val saveSpeedLimitUseCase: SaveSpeedLimitUseCase,
@@ -56,16 +59,10 @@ class SpeedViewModel(
         }
     }
 
-    fun saveSpeedLimit(vehicleId: String, limit: Int) {
-        viewModelScope.launch {
-            saveSpeedLimitUseCase(vehicleId, limit)
-            _speedLimit.value = limit
-        }
-    }
 
     fun pushRentalForSpeedExceeded(currentSpeed: Int, maxSpeedLimitKmph: Int) {
         val rental = Rental(
-            customerId = "cust_test_driver",
+            customerId = "Rakshita",
             vehicleId = vehicleIdForLimit,
             maxSpeedLimitKmph = maxSpeedLimitKmph,
             notificationChannel = "firebase_fcm",
